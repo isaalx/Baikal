@@ -54,6 +54,10 @@ class Standard extends \Baikal\Model\Config {
         "admin_passwordhash" => [
             "type"    => "string",
             "comment" => "Baïkal Web admin password hash; Set via Baïkal Web Admin",
+        ],
+        "mailbox" => [
+            "type"    => "string",
+            "comment" => "IMAP server in the form {host[:port][/flag1/flag2...]}. See http://php.net/manual/en/function.imap-open.php",
         ]
     ];
 
@@ -66,7 +70,8 @@ class Standard extends \Baikal\Model\Config {
         "dav_auth_type"      => "Digest",
         "admin_passwordhash" => "",
         "auth_realm"         => "BaikalDAV",
-        "base_uri"           => ""
+        "base_uri"           => "",
+        "mailbox"            => ""
     ];
 
     function __construct() {
@@ -103,7 +108,7 @@ class Standard extends \Baikal\Model\Config {
         $oMorpho->add(new \Formal\Element\Listbox([
             "prop"    => "dav_auth_type",
             "label"   => "WebDAV authentication type",
-            "options" => ["Digest", "Basic"]
+            "options" => ["Digest", "Basic", "IMAP"]
         ]));
 
         $oMorpho->add(new \Formal\Element\Password([
@@ -115,6 +120,12 @@ class Standard extends \Baikal\Model\Config {
             "prop"       => "admin_passwordhash_confirm",
             "label"      => "Admin password, confirmation",
             "validation" => "sameas:admin_passwordhash",
+        ]));
+
+        $oMorpho->add(new \Formal\Element\Text([
+            "prop"  => "mailbox",
+            "label" => "IMAP mailbox",
+            "help"  => "IMAP server in the form {host[:port][/flag1/flag2...]}"
         ]));
 
         try {

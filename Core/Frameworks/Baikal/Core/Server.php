@@ -76,6 +76,13 @@ class Server {
     protected $pdo;
 
     /**
+     * IMAP mailbox.
+     *
+     * @var string
+     */
+    protected $mailbox;
+
+    /**
      * baseUri for the sabre/dav server.
      *
      * @var string
@@ -99,13 +106,14 @@ class Server {
      * @param PDO $pdo
      * @param string $baseUri
      */
-    function __construct($enableCalDAV, $enableCardDAV, $authType, $authRealm, PDO $pdo, $baseUri) {
+    function __construct($enableCalDAV, $enableCardDAV, $authType, $authRealm, PDO $pdo, $baseUri, $mailbox) {
         $this->enableCalDAV = $enableCalDAV;
         $this->enableCardDAV = $enableCardDAV;
         $this->authType = $authType;
         $this->authRealm = $authRealm;
         $this->pdo = $pdo;
         $this->baseUri = $baseUri;
+        $this->mailbox = $mailbox;
 
         $this->initServer();
     }
@@ -133,6 +141,8 @@ class Server {
 
         if ($this->authType === 'Basic') {
             $authBackend = new \Baikal\Core\PDOBasicAuth($this->pdo, $this->authRealm);
+        } else if ($this->authType === 'IMAP') {
+            $authBackend = new \Sabre\DAV\Auth\Backend\IMAP($this->mailbox);
         } else {
             $authBackend = new \Sabre\DAV\Auth\Backend\PDO($this->pdo);
             $authBackend->setRealm($this->authRealm);
